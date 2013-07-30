@@ -20,7 +20,7 @@ from pylearn2.models.dbm import DBM
 from pylearn2.models.dbm import Softmax
 from pylearn2.space import VectorSpace
 from pylearn2.utils import sharedX
-from  pylearn2.utils.rng import rng_randn, make_rng
+from  pylearn2.utils.rng import rng_randn, make_rng, rng_ints, rng_uniform
 
 
 def check_binary_samples(value, expected_shape, expected_mean, tol):
