@@ -20,7 +20,7 @@ from pylearn2.models.dbm import DBM
 from pylearn2.models.dbm import Softmax
 from pylearn2.space import VectorSpace
 from pylearn2.utils import sharedX
-from  pylearn2.utils.rng import rng_randn, rng_ints, rng_uniform, rng_normal
+from  pylearn2.utils.rng import rng_randn, make_rng
 
 
 def check_binary_samples(value, expected_shape, expected_mean, tol):
@@ -95,7 +95,7 @@ def test_binary_vis_layer_sample():
     vis = BinaryVector(nvis=n)
     hid = DummyLayer()
 
-    rng = rng_uniform()
+    rng = make_rng(typeStr=("uniform", "randn"))
 
     mean = rng.uniform(1e-6, 1. - 1e-6, (n,))
 
@@ -187,7 +187,9 @@ def test_bvmp_make_state():
     num_pools = 3
     num_samples = 1000
     tol = .04
-    rng = rng_uniform()
+    
+    rng = np.random.RandomState([2012,11,1,9]) # left unchanged since is an argument
+    rng = rng_uniform(rng_or_seed=rng)
     # pool_size=1 is an important corner case
     for pool_size in [1, 2, 5]:
         n = num_pools * pool_size
@@ -246,6 +248,8 @@ def make_random_basic_binary_dbm(
     pool_size_1: The size of the pools to use in the first
                  layer.
     """
+    
+    rng = make_rng(rng_or_seed=rng, typeStr=("randint","uniform"))
 
     if num_vis is None:
         num_vis = rng.randint(1,11)
@@ -302,8 +306,8 @@ def test_bvmp_mf_energy_consistent():
     #  = exp(-E(h, v)) / sum_h[i] exp(-E(h, v))
     # So we can check that computing P(h[i] | v) with both
     # methods works the same way
-
-    rng = rng_ints()
+    rng = np.random.RandomState([2012,11,1,613])  # as this is passed also as an argument
+    rng = rng_ints(rng_or_seed=rng)
 
     def do_test(pool_size_1):
 
@@ -424,7 +428,8 @@ def test_bvmp_mf_energy_consistent_center():
     # So we can check that computing P(h[i] | v) with both
     # methods works the same way
 
-    rng = rng_ints()
+    rng = np.random.RandomState([2012,11,1,613])   #left unchanged since also as an argument
+    rng = rng_ints(rng_or_seed=rng)
 
     def do_test(pool_size_1):
 
@@ -540,8 +545,8 @@ def test_bvmp_mf_sample_consistent():
     # of a sample of h1 from v and h2, and check that samples
     # drawn using the layer's sample method convert to that
     # value.
-
-    rng = rng_ints()
+    rng = np.random.RandomState([2012,11,1,1016])  #unchanged since also an argument
+    rng = rng_ints(rng_or_seed=rng)
     theano_rng = MRG_RandomStreams(2012+11+1+1036)
     num_samples = 1000
     tol = .042
@@ -676,7 +681,7 @@ def test_softmax_mf_energy_consistent():
     # So we can check that computing P(h | v) with both
     # methods works the same way
 
-    rng = rng_ints()
+    rng = make_rng(typeStr=("uniform", "randint"))
 
     # Make DBM
     num_vis = rng.randint(1,11)
@@ -762,7 +767,7 @@ def test_softmax_mf_energy_consistent_centering():
     # So we can check that computing P(h | v) with both
     # methods works the same way
 
-    rng = rng_ints()
+    rng = make_rng(typeStr=("uniform","randint"))
 
     # Make DBM
     num_vis = rng.randint(1,11)
@@ -846,7 +851,7 @@ def test_softmax_mf_sample_consistent():
     # drawn using the layer's sample method convert to that
     # value.
 
-    rng = rng_uniform()
+    rng = make_rng(typeStr=("uniform","randint"))
     theano_rng = MRG_RandomStreams(2012+11+1+1154)
     num_samples = 1000
     tol = .042
